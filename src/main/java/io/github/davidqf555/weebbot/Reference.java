@@ -9,6 +9,8 @@ public class Reference {
 
     public final static String TOKEN = getStringSetting("token");
     public final static String COMMAND = getStringSetting("command");
+    public final static int SEARCH_LIMIT = getIntegerSetting("search_limit");
+    public final static int QUEUE_SIZE = getIntegerSetting("queue_size");
 
     private static String getStringSetting(String tag) {
         try {
@@ -25,5 +27,16 @@ public class Reference {
         }
         System.exit(0);
         return null;
+    }
+
+    private static int getIntegerSetting(String tag) {
+        String string = getStringSetting(tag);
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException exception) {
+            Bot.LOGGER.error(tag + " tag is not an integer", exception);
+            System.exit(0);
+            return 0;
+        }
     }
 }
