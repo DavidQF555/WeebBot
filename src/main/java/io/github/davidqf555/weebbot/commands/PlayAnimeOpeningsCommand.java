@@ -30,18 +30,23 @@ public class PlayAnimeOpeningsCommand extends Command {
         AudioManager manager = guild.getAudioManager();
         manager.setSendingHandler(new AudioSendResultHandler(info.getPlayer()));
         manager.openAudioConnection(guild.getMember(message.getAuthor()).getVoiceState().getChannel());
+        info.getScheduler().loadNextTrack();
     }
 
     @Override
     public boolean onCheck(Message message) {
         Guild guild = message.getGuild();
         User user = message.getAuthor();
-        if (guild.getMember(Bot.jda.getSelfUser()).getVoiceState().inVoiceChannel()) {
-            message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " I can only be in one channel").build()).queue();
+        VoiceChannel channel = guild.getMember(Bot.jda.getSelfUser()).getVoiceState().getChannel();
+        VoiceChannel uChannel = guild.getMember(user).getVoiceState().getChannel();
+        if (channel != null) {
+            if (channel.equals(uChannel)) {
+                message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " Already playing").build()).queue();
+            } else {
+                message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " I can only be in one channel").build()).queue();
+            }
             return false;
-        }
-        VoiceChannel channel = guild.getMember(user).getVoiceState().getChannel();
-        if (channel == null) {
+        } else if (uChannel == null) {
             message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " You must be in a voice channel").build()).queue();
             return false;
         }

@@ -10,7 +10,6 @@ public class Reference {
     public final static String TOKEN = getStringSetting("token");
     public final static String COMMAND = getStringSetting("command");
     public final static int SEARCH_LIMIT = getIntegerSetting("search_limit");
-    public final static int QUEUE_SIZE = getIntegerSetting("queue_size");
 
     private static String getStringSetting(String tag) {
         try {

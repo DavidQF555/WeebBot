@@ -1,4 +1,3 @@
 token=
 command=
 search_limit=
-queue_size=
