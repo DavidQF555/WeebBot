@@ -4,7 +4,6 @@ import com.github.doomsdayrs.jikan4java.core.search.animemanga.AnimeSearch;
 import com.github.doomsdayrs.jikan4java.enums.SortBy;
 import com.github.doomsdayrs.jikan4java.enums.search.animemanga.orderby.AnimeOrderBy;
 import com.github.doomsdayrs.jikan4java.types.main.anime.Anime;
-import com.github.doomsdayrs.jikan4java.types.main.anime.animePage.AnimePage;
 import com.github.doomsdayrs.jikan4java.types.main.anime.animePage.AnimePageAnime;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -20,8 +19,12 @@ import io.github.davidqf555.weebbot.Util;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AnimeOpeningScheduler extends AudioEventAdapter {
 
+    private static final int ANIME_PER_PAGE = 50;
     private final Guild guild;
 
     public AnimeOpeningScheduler(Guild guild) {
@@ -29,19 +32,22 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
     }
 
     private static String getRandomOpeningSearch() {
-        while (true) {
-            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(Reference.SEARCH_LIMIT);
-            AnimePage page = as.get().join();
-            while (!page.animes.isEmpty()) {
-                AnimePageAnime future = page.animes.get((int) (Math.random() * page.animes.size()));
-                Anime anime = new AnimeSearch().getByID(future.mal_id).join();
-                if (anime.opening_themes.isEmpty()) {
-                    page.animes.remove(future);
-                } else {
-                    return anime.title_english + " opening " + (int) (Math.random() * anime.opening_themes.size() + 1);
-                }
+        List<AnimePageAnime> all = new ArrayList<>();
+        int pages = (int) Math.ceil(Reference.SEARCH_LIMIT * 1.0 / ANIME_PER_PAGE);
+        for (int page = 1; page <= pages; page++) {
+            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(page == pages ? Reference.SEARCH_LIMIT % ANIME_PER_PAGE : ANIME_PER_PAGE).setPage(page);
+            all.addAll(as.get().join().animes);
+        }
+        while (!all.isEmpty()) {
+            AnimePageAnime animePage = all.get((int) (Math.random() * all.size()));
+            Anime anime = new AnimeSearch().getByID(animePage.mal_id).join();
+            if (anime.opening_themes.isEmpty()) {
+                all.remove(animePage);
+            } else {
+                return anime.title_english + " opening " + (int) (Math.random() * anime.opening_themes.size() + 1);
             }
         }
+        throw new RuntimeException("Could not find any anime openings in the " + Reference.SEARCH_LIMIT + " most popular anime");
     }
 
     @Override
