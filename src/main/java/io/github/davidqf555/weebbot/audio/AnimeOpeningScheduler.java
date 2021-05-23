@@ -14,7 +14,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.davidqf555.weebbot.Bot;
-import io.github.davidqf555.weebbot.Reference;
+import io.github.davidqf555.weebbot.Settings;
 import io.github.davidqf555.weebbot.Util;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -33,9 +33,9 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
 
     private static String getRandomOpeningSearch() {
         List<AnimePageAnime> all = new ArrayList<>();
-        int pages = (int) Math.ceil(Reference.SEARCH_LIMIT * 1.0 / ANIME_PER_PAGE);
+        int pages = (int) Math.ceil(Settings.SEARCH_LIMIT * 1.0 / ANIME_PER_PAGE);
         for (int page = 1; page <= pages; page++) {
-            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(page == pages ? Reference.SEARCH_LIMIT % ANIME_PER_PAGE : ANIME_PER_PAGE).setPage(page);
+            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(page == pages ? Settings.SEARCH_LIMIT % ANIME_PER_PAGE : ANIME_PER_PAGE).setPage(page);
             all.addAll(as.get().join().animes);
         }
         while (!all.isEmpty()) {
@@ -47,7 +47,7 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
                 return anime.title_english + " opening " + (int) (Math.random() * anime.opening_themes.size() + 1);
             }
         }
-        throw new RuntimeException("Could not find any anime openings in the " + Reference.SEARCH_LIMIT + " most popular anime");
+        throw new RuntimeException("Could not find any anime openings in the " + Settings.SEARCH_LIMIT + " most popular anime");
     }
 
     @Override

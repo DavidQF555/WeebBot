@@ -23,7 +23,7 @@ public class Bot {
 
     public static void main(String[] args) {
         try {
-            jda = JDABuilder.createDefault(Reference.TOKEN).build();
+            jda = JDABuilder.createDefault(Settings.TOKEN).build();
         } catch (LoginException exception) {
             LOGGER.error("Invalid Token", exception);
             System.exit(0);

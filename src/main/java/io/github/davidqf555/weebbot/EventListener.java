@@ -17,7 +17,7 @@ public class EventListener extends ListenerAdapter {
         for (CommandType type : CommandType.values()) {
             Command command = type.getCommand();
             for (String name : type.getNames()) {
-                if (raw.toLowerCase().startsWith(Reference.COMMAND + name.toLowerCase())) {
+                if (raw.toLowerCase().startsWith(Settings.COMMAND + name.toLowerCase())) {
                     if (command.onCheck(message)) {
                         command.onCommand(message);
                         GuildInfo info = Bot.info.get(event.getGuild());
