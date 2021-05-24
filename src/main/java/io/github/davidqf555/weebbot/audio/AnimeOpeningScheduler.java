@@ -35,7 +35,7 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
         List<AnimePageAnime> all = new ArrayList<>();
         int pages = (int) Math.ceil(Settings.SEARCH_LIMIT * 1.0 / ANIME_PER_PAGE);
         for (int page = 1; page <= pages; page++) {
-            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(page == pages ? Settings.SEARCH_LIMIT % ANIME_PER_PAGE : ANIME_PER_PAGE).setPage(page);
+            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(Math.min(Settings.SEARCH_LIMIT - page * ANIME_PER_PAGE + ANIME_PER_PAGE, ANIME_PER_PAGE)).setPage(page);
             all.addAll(as.get().join().animes);
         }
         while (!all.isEmpty()) {
