@@ -1,10 +1,5 @@
 package io.github.davidqf555.weebbot.audio;
 
-import com.github.doomsdayrs.jikan4java.core.search.animemanga.AnimeSearch;
-import com.github.doomsdayrs.jikan4java.enums.SortBy;
-import com.github.doomsdayrs.jikan4java.enums.search.animemanga.orderby.AnimeOrderBy;
-import com.github.doomsdayrs.jikan4java.types.main.anime.Anime;
-import com.github.doomsdayrs.jikan4java.types.main.anime.animePage.AnimePageAnime;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -14,40 +9,35 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import io.github.davidqf555.weebbot.Bot;
-import io.github.davidqf555.weebbot.Settings;
 import io.github.davidqf555.weebbot.Util;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.util.ArrayList;
-import java.util.List;
+public abstract class AudioScheduler extends AudioEventAdapter {
 
-public class AnimeOpeningScheduler extends AudioEventAdapter {
-
-    private static final int ANIME_PER_PAGE = 50;
     private final Guild guild;
 
-    public AnimeOpeningScheduler(Guild guild) {
+    public AudioScheduler(Guild guild) {
         this.guild = guild;
     }
 
-    private static String getRandomOpeningSearch() {
-        List<AnimePageAnime> all = new ArrayList<>();
-        int pages = (int) Math.ceil(Settings.SEARCH_LIMIT * 1.0 / ANIME_PER_PAGE);
-        for (int page = 1; page <= pages; page++) {
-            AnimeSearch as = new AnimeSearch().orderBy(AnimeOrderBy.MEMBERS).sortBy(SortBy.DESCENDING).setLimit(Math.min(Settings.SEARCH_LIMIT - page * ANIME_PER_PAGE + ANIME_PER_PAGE, ANIME_PER_PAGE)).setPage(page);
-            all.addAll(as.get().join().animes);
-        }
-        while (!all.isEmpty()) {
-            AnimePageAnime animePage = all.get((int) (Math.random() * all.size()));
-            Anime anime = new AnimeSearch().getByID(animePage.mal_id).join();
-            if (anime.opening_themes.isEmpty()) {
-                all.remove(animePage);
-            } else {
-                return anime.title_english + " opening " + (int) (Math.random() * anime.opening_themes.size() + 1);
-            }
-        }
-        throw new RuntimeException("Could not find any anime openings in the " + Settings.SEARCH_LIMIT + " most popular anime");
+    public void skip() {
+        getPlayer().stopTrack();
+        loadNextTrack();
+    }
+
+    protected abstract String getNextSearch();
+
+    public void loadNextTrack() {
+        Bot.MANAGER.loadItem(getNextSearch(), new ResultHandler());
+    }
+
+    public AudioPlayer getPlayer() {
+        return Bot.INFO.get(guild).getPlayer();
+    }
+
+    public TextChannel getTextChannel() {
+        return Bot.INFO.get(guild).getTextChannel();
     }
 
     @Override
@@ -74,25 +64,14 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
         loadNextTrack();
     }
 
-    public void skip() {
-        getPlayer().stopTrack();
-        loadNextTrack();
+    public void end() {
+        Bot.INFO.get(guild).setScheduler(null);
+        AudioPlayer player = getPlayer();
+        player.stopTrack();
+        player.removeListener(this);
     }
 
-    public void loadNextTrack() {
-        Bot.MANAGER.loadItem("ytsearch:" + getRandomOpeningSearch(), new AnimeOpeningLoadResultHandler());
-    }
-
-    private AudioPlayer getPlayer() {
-        return Bot.INFO.get(guild).getPlayer();
-    }
-
-    private TextChannel getTextChannel() {
-        return Bot.INFO.get(guild).getTextChannel();
-    }
-
-
-    private class AnimeOpeningLoadResultHandler implements AudioLoadResultHandler {
+    private class ResultHandler implements AudioLoadResultHandler {
 
         @Override
         public void trackLoaded(AudioTrack track) {
@@ -115,4 +94,5 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
         }
 
     }
+
 }

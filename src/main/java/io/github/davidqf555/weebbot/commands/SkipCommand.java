@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.util.Map;
 
-public class SkipAnimeOpeningCommand extends Command {
+public class SkipCommand extends Command {
 
     @Override
     public void onCommand(Message message, Map<String, String> args) {

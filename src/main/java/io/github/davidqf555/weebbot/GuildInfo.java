@@ -1,17 +1,18 @@
 package io.github.davidqf555.weebbot;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import io.github.davidqf555.weebbot.audio.AnimeOpeningScheduler;
+import io.github.davidqf555.weebbot.audio.AudioScheduler;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.jetbrains.annotations.Nullable;
 
 public class GuildInfo {
 
     private final AudioPlayer player;
-    private final AnimeOpeningScheduler scheduler;
+    private AudioScheduler scheduler;
     private TextChannel channel;
 
-    public GuildInfo(AudioPlayer player, AnimeOpeningScheduler scheduler) {
-        this.player = player;
+    public GuildInfo(@Nullable AudioScheduler scheduler) {
+        player = Bot.MANAGER.createPlayer();
         this.scheduler = scheduler;
         channel = null;
     }
@@ -20,8 +21,13 @@ public class GuildInfo {
         return player;
     }
 
-    public AnimeOpeningScheduler getScheduler() {
+    @Nullable
+    public AudioScheduler getScheduler() {
         return scheduler;
+    }
+
+    public void setScheduler(AudioScheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     public TextChannel getTextChannel() {

@@ -2,10 +2,12 @@ package io.github.davidqf555.weebbot.commands;
 
 public enum CommandType {
 
-    PLAY_ANIME_OPENINGS(new PlayAnimeOpeningsCommand(), "play"),
-    SKIP_ANIME_OPENINGS(new SkipAnimeOpeningCommand(), "skip"),
-    LEAVE_COMMAND(new LeaveCommand(), "leave"),
-    SEARCH_COMMAND(new SearchCommand(), "search");
+    PLAY_ANIME_OPS(new PlayAnimeOPsCommand(), "op"),
+    PLAY_ANIME_OSTS(new PlayAnimeOSTsCommand(), "ost"),
+    SKIP(new SkipCommand(), "skip"),
+    PAUSE(new PauseCommand(), "pause"),
+    LEAVE(new LeaveCommand(), "leave"),
+    SEARCH_ANIME(new SearchAnimeCommand(), "anime");
 
     private final Command command;
     private final String[] names;

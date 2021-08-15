@@ -1,18 +1,16 @@
 package io.github.davidqf555.weebbot.commands;
 
-import com.github.doomsdayrs.jikan4java.core.search.animemanga.AnimeSearch;
 import com.github.doomsdayrs.jikan4java.types.main.anime.animePage.AnimePageAnime;
 import io.github.davidqf555.weebbot.Util;
 import net.dv8tion.jda.api.entities.Message;
 
 import java.util.Map;
 
-public class SearchCommand extends Command {
+public class SearchAnimeCommand extends Command {
 
     @Override
     public void onCommand(Message message, Map<String, String> args) {
-        AnimeSearch search = new AnimeSearch().setQuery(args.get("title"));
-        AnimePageAnime anime = search.get().join().animes.get(0);
+        AnimePageAnime anime = Util.searchAnimePage(args.get("title"));
         message.reply(Util.createMessage(anime.synopsis).setTitle(anime.title, anime.url).setImage(anime.image_url).setAuthor(anime.source).build()).queue();
     }
 
