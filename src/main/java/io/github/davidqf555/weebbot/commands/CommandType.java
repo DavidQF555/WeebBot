@@ -4,7 +4,8 @@ public enum CommandType {
 
     PLAY_ANIME_OPENINGS(new PlayAnimeOpeningsCommand(), "play"),
     SKIP_ANIME_OPENINGS(new SkipAnimeOpeningCommand(), "skip"),
-    LEAVE_COMMAND(new LeaveCommand(), "leave");
+    LEAVE_COMMAND(new LeaveCommand(), "leave"),
+    SEARCH_COMMAND(new SearchCommand(), "search");
 
     private final Command command;
     private final String[] names;

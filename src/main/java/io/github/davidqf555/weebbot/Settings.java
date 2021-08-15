@@ -12,6 +12,7 @@ public class Settings {
     public final static String TOKEN = getStringSetting("token");
     public final static String COMMAND = getStringSetting("command");
     public final static int SEARCH_LIMIT = getIntegerSetting("search_limit");
+    public static final String ARGS = getStringSetting("args");
 
     private static String getStringSetting(String key) {
         Properties properties = new Properties();

@@ -80,15 +80,15 @@ public class AnimeOpeningScheduler extends AudioEventAdapter {
     }
 
     public void loadNextTrack() {
-        Bot.manager.loadItem("ytsearch:" + getRandomOpeningSearch(), new AnimeOpeningLoadResultHandler());
+        Bot.MANAGER.loadItem("ytsearch:" + getRandomOpeningSearch(), new AnimeOpeningLoadResultHandler());
     }
 
     private AudioPlayer getPlayer() {
-        return Bot.info.get(guild).getPlayer();
+        return Bot.INFO.get(guild).getPlayer();
     }
 
     private TextChannel getTextChannel() {
-        return Bot.info.get(guild).getTextChannel();
+        return Bot.INFO.get(guild).getTextChannel();
     }
 
 

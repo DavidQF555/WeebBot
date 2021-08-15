@@ -12,20 +12,22 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
+import java.util.Map;
+
 public class PlayAnimeOpeningsCommand extends Command {
 
     @Override
-    public void onCommand(Message message) {
+    public void onCommand(Message message, Map<String, String> args) {
         Guild guild = message.getGuild();
         GuildInfo info;
-        if (Bot.info.containsKey(guild)) {
-            info = Bot.info.get(guild);
+        if (Bot.INFO.containsKey(guild)) {
+            info = Bot.INFO.get(guild);
         } else {
-            AudioPlayer player = Bot.manager.createPlayer();
+            AudioPlayer player = Bot.MANAGER.createPlayer();
             AnimeOpeningScheduler scheduler = new AnimeOpeningScheduler(guild);
             player.addListener(scheduler);
             info = new GuildInfo(player, scheduler);
-            Bot.info.put(guild, info);
+            Bot.INFO.put(guild, info);
         }
         AudioManager manager = guild.getAudioManager();
         manager.setSendingHandler(new AudioSendResultHandler(info.getPlayer()));
@@ -34,20 +36,20 @@ public class PlayAnimeOpeningsCommand extends Command {
     }
 
     @Override
-    public boolean onCheck(Message message) {
+    public boolean onCheck(Message message, Map<String, String> args) {
         Guild guild = message.getGuild();
         User user = message.getAuthor();
         VoiceChannel channel = guild.getMember(Bot.jda.getSelfUser()).getVoiceState().getChannel();
         VoiceChannel uChannel = guild.getMember(user).getVoiceState().getChannel();
         if (channel != null) {
             if (channel.equals(uChannel)) {
-                message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " Already playing").build()).queue();
+                message.reply(Util.createFailedMessage("Already playing").build()).queue();
             } else {
-                message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " I can only be in one channel").build()).queue();
+                message.reply(Util.createFailedMessage("I can only be in one channel").build()).queue();
             }
             return false;
         } else if (uChannel == null) {
-            message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " You must be in a voice channel").build()).queue();
+            message.reply(Util.createFailedMessage("You must be in a voice channel").build()).queue();
             return false;
         }
         return true;

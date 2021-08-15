@@ -17,8 +17,8 @@ import java.util.Map;
 public class Bot {
 
     public static final Logger LOGGER = JDALogger.getLog(Bot.class);
-    public static final Map<Guild, GuildInfo> info = new HashMap<>();
-    public static final AudioPlayerManager manager = new DefaultAudioPlayerManager();
+    public static final Map<Guild, GuildInfo> INFO = new HashMap<>();
+    public static final AudioPlayerManager MANAGER = new DefaultAudioPlayerManager();
     public static JDA jda;
 
     public static void main(String[] args) {
@@ -28,8 +28,8 @@ public class Bot {
             LOGGER.error("Invalid Token", exception);
             System.exit(0);
         }
-        manager.registerSourceManager(new YoutubeAudioSourceManager(true));
-        AudioSourceManagers.registerRemoteSources(manager);
+        MANAGER.registerSourceManager(new YoutubeAudioSourceManager(true));
+        AudioSourceManagers.registerRemoteSources(MANAGER);
         Bot.jda.addEventListener(new EventListener());
     }
 }

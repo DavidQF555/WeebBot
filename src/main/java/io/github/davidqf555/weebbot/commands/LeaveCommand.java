@@ -7,22 +7,24 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
+import java.util.Map;
+
 public class LeaveCommand extends Command {
 
     @Override
-    public void onCommand(Message message) {
+    public void onCommand(Message message, Map<String, String> args) {
         message.getGuild().getAudioManager().closeAudioConnection();
     }
 
     @Override
-    public boolean onCheck(Message message) {
+    public boolean onCheck(Message message, Map<String, String> args) {
         Guild guild = message.getGuild();
         User user = message.getAuthor();
         VoiceChannel channel = guild.getMember(Bot.jda.getSelfUser()).getVoiceState().getChannel();
         if (channel != null && channel.equals(guild.getMember(user).getVoiceState().getChannel())) {
             return true;
         }
-        message.getChannel().sendMessage(Util.createFailedMessage(user.getAsMention() + " You must be in the same channel as me").build()).queue();
+        message.reply(Util.createFailedMessage("You must be in the same channel as me").build()).queue();
         return false;
     }
 
