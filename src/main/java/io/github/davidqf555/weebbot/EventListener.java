@@ -42,10 +42,6 @@ public class EventListener extends ListenerAdapter {
                     }
                     if (command.onCheck(message, args)) {
                         command.onCommand(message, args);
-                        GuildInfo info = Bot.INFO.get(event.getGuild());
-                        if (info != null) {
-                            info.setTextChannel(event.getChannel());
-                        }
                     }
                     return;
                 }

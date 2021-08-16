@@ -32,6 +32,7 @@ public abstract class PlayAudioCommand extends Command {
         info.setScheduler(scheduler);
         player.addListener(scheduler);
         scheduler.loadNextTrack();
+        info.setTextChannel(message.getTextChannel());
     }
 
     @Override
